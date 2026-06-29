@@ -1,5 +1,5 @@
 from pathlib import Path
-import dotenv
+from dotenv import load_dotenv
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
@@ -19,10 +19,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
-    'apps.channels',
-    'apps.notifications',
-    'apps.templates',
-    'apps.users'
+    'apps.nchannels.apps.NchannelsConfig',
+    'apps.notifications.apps.NotificationsConfig',
+    'apps.ntemplates.apps.NtemplatesConfig',
+    'apps.users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
