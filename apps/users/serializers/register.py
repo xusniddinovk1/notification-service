@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from apps.users.models import User
+from apps.users.services.register import UserRegisterService
+from apps.users.repositories.user import (
+    UserRepository,
+)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -10,5 +14,5 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ["email", "password", "first_name", "last_name"]
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
+        service = UserRegisterService(repository=UserRepository())
+        return service.register(**validated_data)
