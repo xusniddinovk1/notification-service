@@ -14,5 +14,5 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ["email", "password", "first_name", "last_name"]
 
     def create(self, validated_data):
-        service = UserRegisterService(repository=UserRepository())
+        service = UserRegisterService(repo=UserRepository())
         return service.register(**validated_data)
