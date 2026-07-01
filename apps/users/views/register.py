@@ -13,5 +13,11 @@ class RegisterView(APIView):
     def post(self, request: Request):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        user, tokens = serializer.save()
+        return Response(
+            {
+                "users": RegisterSerializer(user).data,
+                "tokens": tokens,
+            },
+            status=status.HTTP_201_CREATED,
+        )
