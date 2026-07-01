@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.users.models import User
 from apps.users.services.register import UserRegisterService
-from apps.users.repositories.user import (
+from apps.users.repositories.register import (
     UserRepository,
 )
 
