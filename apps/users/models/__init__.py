@@ -1,3 +1,4 @@
 from .users import User
+from .user_preference import Preference
 
-__all__ = ["User"]
+__all__ = ["User", "Preference"]
