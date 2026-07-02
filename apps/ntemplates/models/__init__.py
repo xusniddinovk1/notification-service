@@ -1,3 +1,3 @@
-from .notification_template import NotificationChannel
+from .notification_template import NotificationTemplate
 
-__all__ = ["NotificationChannel"]
+__all__ = ["NotificationTemplate"]
