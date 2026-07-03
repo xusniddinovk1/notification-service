@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
@@ -9,6 +10,7 @@ from .container import get_channel_service
 from .models import NotificationChannel
 
 
+@extend_schema(tags=["channels"])
 class ChannelListAPIView(APIView):
     permission_classes = [IsAuthenticated]
     service: NotificationChannelService
@@ -33,6 +35,7 @@ class ChannelListAPIView(APIView):
         )
 
 
+@extend_schema(tags=["channels"])
 class ChannelDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
     service: NotificationChannelService

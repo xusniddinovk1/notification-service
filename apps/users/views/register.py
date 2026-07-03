@@ -6,7 +6,7 @@ from rest_framework import status, permissions
 from apps.users.serializers.register import RegisterSerializer
 
 
-@extend_schema(request=RegisterSerializer, responses=RegisterSerializer)
+@extend_schema(request=RegisterSerializer, responses=RegisterSerializer, tags=["auth"])
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
 
