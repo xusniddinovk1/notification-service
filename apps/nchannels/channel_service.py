@@ -35,5 +35,5 @@ class NotificationChannelService:
     def delete_channel(self, channel_id: int) -> None:
         channel = self.repo.get_channel_by_id(channel_id)
         if not channel:
-            raise ValueError("Channel not found")
+            raise Http404("Channel not found")
         self.repo.delete_channel(channel_id)
