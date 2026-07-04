@@ -59,3 +59,21 @@ class NotificationService:
         notification.status = status
         self.repo.update_notification(notification)
         return notification
+
+    def get_stats(self):
+        stats, by_channel = self.repo.get_stats()
+
+        total = stats['total']
+        sent = stats['sent']
+        delivery_rate = f"{(sent / total * 100):.1f}%" if total > 0 else "0%"
+
+        channel_stats = {
+            item['template__channel__channel']: item['count']
+            for item in by_channel
+        }
+
+        return {
+            **stats,
+            "delivery_rate": delivery_rate,
+            "by_channel": channel_stats,
+        }
