@@ -1,102 +1,145 @@
 # notification-service
-Notification Service — email, SMS va in-app xabarlarni markazlashtirib yuboruvchi backend tizim.
 
-# 0. Requirements
-    Docker
-    Docker-compose
-    Make
-    uv
+Notification Service — a centralized backend service for sending Email, SMS, and In-App notifications built with Django + DRF, Celery, and Redis.
 
-# 0.1 Environment Variables
-* (dev mode) Required environment variables
+---
+
+## Requirements
+
+- Docker
+- Docker Compose
+- uv
+- make (optional, recommended)
+
+---
+
+## Environment Variables
+
 ```bash
-copy .env.example .env
-nano .env  # Insert all the required values
+cp .env.example .env
+# Fill in the required values
 ```
 
-* (prod mode) Required environment variables
-```bash
-copy .env.example .env
-nano .env  Insert all the required values
+Key variables:
+
+```env
+SECRET_KEY=
+DEBUG=True
+DJANGO_SETTINGS_MODULE=config.settings.dev
+
+REDIS_URL=redis://redis:6379/0
+
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+EMAIL_USE_TLS=True
 ```
 
-# 1. Running the Project
+---
 
-## 1.1. Native running (uv)
-1.
+## Running the Project
+
+### 1. Native (uv)
+
 ```bash
 git clone https://github.com/xusniddinovk1/notification-service
-```
-2.
-```bash
 cd notification-service
-```
-3. Sync dependencies
-```bash
+
 uv sync
-```
-4. Create migrations
-```bash
+
 uv run manage.py makemigrations
-```
-5. Run migrations
-```bash
 uv run manage.py migrate
-```
-6. Create superuser
-```bash
+
 uv run manage.py createsuperuser
-```
-7. Start the server
-```bash
+
 uv run manage.py runserver
 ```
 
-## 1.2 Docker/docker-compose running
+### 2. Docker Compose (Recommended)
 
-1. Docker compose
 ```bash
-docker-compose -f ./docker/docker-compose.yaml up -d
-```
-2. Docker 
-```bash
-docker rm notification-service
-docker run -d -p 8000:8000 notification-service
+docker compose -f docker/docker-compose.yml up -d
 ```
 
-## 1.3 Makefile (Recommended)
+Starts 3 containers: `web`, `redis`, `celery`.
 
-1. For development
+### 3. Makefile
+
 ```bash
-make dev
-```
-2. For test development(pre-prod)
-```bash
-make pre-prod
+make dev        # Run development server
+make pre-prod   # Build and run via Docker
+make stop       # Stop Docker containers
 ```
 
-# 2. Code Quality and Testing
+---
 
-## 2.1 Linters
+## API Endpoints
 
-1. Black
+### Auth
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/register/` | Register a new user |
+| POST | `/api/v1/login/` | Login (returns JWT tokens) |
+| POST | `/api/v1/token/refresh/` | Refresh access token |
+
+### Channels
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/channels/` | List all channels |
+| POST | `/api/v1/channels/` | Create a channel |
+| GET | `/api/v1/channels/{id}/` | Get a channel |
+| PUT | `/api/v1/channels/{id}/` | Update a channel |
+| DELETE | `/api/v1/channels/{id}/` | Delete a channel |
+
+### Templates
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/templates/` | List all templates |
+| POST | `/api/v1/templates/` | Create a template |
+| GET | `/api/v1/templates/{id}/` | Get a template |
+| PUT | `/api/v1/templates/{id}/` | Update a template |
+| DELETE | `/api/v1/templates/{id}/` | Delete a template |
+
+### Preferences
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/preferences/` | List my preferences |
+| POST | `/api/v1/preferences/` | Create a preference |
+| PUT | `/api/v1/preferences/{id}/` | Update a preference |
+| DELETE | `/api/v1/preferences/{id}/` | Delete a preference |
+
+### Notifications
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/v1/notifications/` | List my notifications | User |
+| GET | `/api/v1/notifications/{id}/` | Get a notification | User |
+| POST | `/api/v1/notifications/send/` | Send a notification | Admin only |
+| GET | `/api/v1/notifications/stats/` | Delivery statistics | Admin only |
+
+---
+
+## API Documentation
+
+```
+http://localhost:8000/api/schema/swagger-ui/
+```
+
+---
+
+## Code Quality
+
 ```bash
 uv run black .
-```
-2. Ruff
-```bash
 uv run ruff .
-```
-3. Mypy
-```bash
 uv run mypy .
-```
-
-## 2.2 Testing
-
-1. Pytest
-```bash
 uv run pytest .
 ```
 
-All of the above can also be run via Makefile (recommended)
+All of the above can also be run via Makefile (recommended).
+
+---
+
+## Architecture
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for details on system design, layered architecture, and SOLID principles.
