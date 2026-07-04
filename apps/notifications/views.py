@@ -1,3 +1,62 @@
-from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
+from .container import get_notification_service
+from drf_spectacular.utils import extend_schema
 
-# Create your views here.
+from .serializer import NotificationSerializer, SendNotificationSerializer
+from .services import NotificationService
+
+
+@extend_schema(tags=["notifications"], request=NotificationSerializer, responses=NotificationSerializer)
+class NotificationListView(APIView):
+    permission_classes = [IsAuthenticated]
+    service: NotificationService
+
+    def __init__(self, **kwargs: object) -> None:
+        super().__init__(**kwargs)
+        self.service = get_notification_service()
+
+    def get(self, request: Request) -> Response:
+        notifications = self.service.list_notifications(request.user)
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data, status=HTTP_200_OK)
+
+
+@extend_schema(tags=["notifications"], responses=NotificationSerializer, request=SendNotificationSerializer)
+class NotificationSendView(APIView):
+    permission_classes = [IsAuthenticated]
+    service: NotificationService
+
+    def __init__(self, **kwargs: object) -> None:
+        super().__init__(**kwargs)
+        self.service = get_notification_service()
+
+    def post(self, request: Request) -> Response:
+        serializer = SendNotificationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        template_id = serializer.validated_data["template_id"]
+        payload = serializer.validated_data["payload"]
+        user = request.user
+        notification = self.service.create_notification(user, template_id, payload)
+        return Response(
+            NotificationSerializer(notification).data,
+            status=HTTP_201_CREATED,
+        )
+
+
+@extend_schema(tags=["notifications"], responses=NotificationSerializer, request=NotificationSerializer)
+class NotificationDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+    service: NotificationService
+
+    def __init__(self, **kwargs: object) -> None:
+        super().__init__(**kwargs)
+        self.service = get_notification_service()
+
+    def get(self, request: Request, notification_id: int) -> Response:
+        notification = self.service.get_notification(notification_id)
+        serializer = NotificationSerializer(notification)
+        return Response(serializer.data, status=HTTP_200_OK)
