@@ -57,6 +57,6 @@ class NotificationDetailView(APIView):
         self.service = get_notification_service()
 
     def get(self, request: Request, notification_id: int) -> Response:
-        notification = self.service.get_notification(notification_id)
+        notification = self.service.get_notification(request.user, notification_id)
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=HTTP_200_OK)
