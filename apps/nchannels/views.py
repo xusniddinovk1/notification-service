@@ -10,7 +10,7 @@ from .container import get_channel_service
 from .models import NotificationChannel
 
 
-@extend_schema(tags=["channels"])
+@extend_schema(request=NotificationChannelSerializer, responses=NotificationChannelSerializer, tags=["channels"])
 class ChannelListAPIView(APIView):
     permission_classes = [IsAuthenticated]
     service: NotificationChannelService
