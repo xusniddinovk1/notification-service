@@ -60,3 +60,16 @@ class NotificationDetailView(APIView):
         notification = self.service.get_notification(request.user, notification_id)
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=HTTP_200_OK)
+
+
+@extend_schema(tags=["stats"])
+class NotificationStatsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def __init__(self, **kwargs: object) -> None:
+        super().__init__(**kwargs)
+        self.service = get_notification_service()
+
+    def get(self, request: Request) -> Response:
+        stats = self.service.get_stats()
+        return Response(stats, status=HTTP_200_OK)
