@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -27,7 +27,7 @@ class NotificationListView(APIView):
 
 @extend_schema(tags=["notifications"], responses=NotificationSerializer, request=SendNotificationSerializer)
 class NotificationSendView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
     service: NotificationService
 
     def __init__(self, **kwargs: object) -> None:
