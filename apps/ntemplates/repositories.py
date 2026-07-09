@@ -9,11 +9,17 @@ class TemplatesRepository:
     def get_template(self, template_id: int) -> NotificationTemplate:
         return NotificationTemplate.objects.filter(id=template_id).first()
 
-    def create_template(self, entity: NotificationTemplate) -> NotificationTemplate:
+    def create_template(
+            self,
+            entity: NotificationTemplate
+    ) -> NotificationTemplate:
         entity.save()
         return entity
 
-    def update_template(self, entity: NotificationTemplate) -> NotificationTemplate:
+    def update_template(
+            self,
+            entity: NotificationTemplate
+    ) -> NotificationTemplate:
         entity.save()
         return entity
 

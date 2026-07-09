@@ -1,23 +1,37 @@
+from django.contrib.auth import get_user_model
 from django.db.models import QuerySet, Count, Q
 
 from .models import Notification
 from ..ntemplates.models import NotificationTemplate
+
+User = get_user_model()
 
 
 class NotificationRepository:
     def get_all_notifications(self) -> QuerySet[Notification]:
         return Notification.objects.all()
 
-    def get_user_notifications(self, user) -> QuerySet[Notification]:
+    def get_user_notifications(
+            self,
+            user: User
+    ) -> QuerySet[Notification]:
         return Notification.objects.filter(user=user)
 
-    def get_notification(self, notification_id: int) -> Notification:
+    def get_notification(
+            self,
+            notification_id: int
+    ) -> Notification:
         return Notification.objects.filter(id=notification_id).first()
 
-    def get_template_by_id(self, template_id: int) -> NotificationTemplate:
-        return NotificationTemplate.objects.filter(id=template_id).first()
+    def get_template_by_id(
+            self,
+            template_id: int
+    ) -> NotificationTemplate:
+        return NotificationTemplate.objects.filter(
+            id=template_id
+        ).first()
 
-    def get_stats(self):
+    def get_stats(self) -> dict:
         stats = Notification.objects.aggregate(
             total=Count('id'),
             sent=Count('id', filter=Q(status='SENT')),

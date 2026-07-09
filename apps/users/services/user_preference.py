@@ -3,37 +3,47 @@ from django.http import Http404
 
 from apps.users.models import Preference
 from apps.users.repositories.user_preferences import UserPreferenceRepository
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class UserPreferenceService:
-    def __init__(self, repo: UserPreferenceRepository) -> None:
+    def __init__(
+            self,
+            repo: UserPreferenceRepository
+    ) -> None:
         self.repo = repo
 
     def list_preferences(
             self,
-            user
+            user: User
     ) -> QuerySet[Preference]:
         return self.repo.get_channel_preferences(user)
 
     def get_user_preference(
             self,
-            user,
+            user: User,
             preference_id: int
     ) -> Preference:
         preference = self.repo.get_channel_preference(preference_id)
         if not preference:
-            raise Http404(f"Preference with id {preference_id} not found")
+            raise Http404(
+                f"Preference with id {preference_id} not found"
+            )
         if preference.user != user:
             raise Http404(f"Preference with user {user} not found")
         return preference
 
-    def create_preference(self, preference: Preference) -> Preference:
+    def create_preference(
+            self,
+            preference: Preference
+    ) -> Preference:
         self.repo.create_preference(preference)
         return preference
 
     def update_preference(
             self,
-            user,
+            user: User,
             preference_id: int,
             preference_data: Preference
     ) -> Preference:
@@ -45,6 +55,10 @@ class UserPreferenceService:
         self.repo.update_preference(preference_data)
         return preference_data
 
-    def delete_preference(self, user, preference_id: int) -> None:
+    def delete_preference(
+            self,
+            user: User,
+            preference_id: int
+    ) -> None:
         self.get_user_preference(user, preference_id)
         self.repo.delete_preference(preference_id)

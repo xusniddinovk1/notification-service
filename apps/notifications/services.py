@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.http import Http404
 from rest_framework.exceptions import ValidationError
@@ -7,27 +8,32 @@ from .models import Notification
 from .repositories import NotificationRepository
 from ..users.repositories.user_preferences import UserPreferenceRepository
 
+User = get_user_model()
+
 
 class NotificationService:
     def __init__(
             self,
             repo: NotificationRepository,
             preference_repo: UserPreferenceRepository
-    ):
+    ) -> None:
         self.repo = repo
         self.preference_repo = preference_repo
 
-    def get_notifications(self):
+    def get_notifications(self) -> QuerySet[Notification]:
         return self.repo.get_all_notifications()
 
-    def list_notifications(self, user) -> QuerySet[Notification]:
+    def list_notifications(
+            self,
+            user: User
+    ) -> QuerySet[Notification]:
         if user.is_staff:
             return self.repo.get_all_notifications()
         return self.repo.get_user_notifications(user=user)
 
     def get_notification(
             self,
-            user,
+            user: User,
             notification_id: int
     ) -> Notification:
         notification = self.repo.get_notification(notification_id)
@@ -39,7 +45,10 @@ class NotificationService:
 
     def create_notification(
             self,
-            user, template_id: int, payload: dict) -> Notification:
+            user: User,
+            template_id: int,
+            payload: dict
+    ) -> Notification:
         template = self.repo.get_template_by_id(template_id)
         if not template:
             raise Http404(f"Template with id {template_id} not found")
@@ -72,7 +81,7 @@ class NotificationService:
         self.repo.update_notification(notification)
         return notification
 
-    def get_stats(self):
+    def get_stats(self) -> dict:
         stats, by_channel = self.repo.get_stats()
 
         total = stats['total']

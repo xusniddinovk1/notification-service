@@ -18,7 +18,7 @@ from .services import NotificationService
 
 
 class NotificationListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     service: NotificationService
 
     def __init__(self, **kwargs: object) -> None:
@@ -33,7 +33,7 @@ class NotificationListView(APIView):
 
 
 class NotificationSendView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = (IsAdminUser, )
     service: NotificationService
 
     def __init__(self, **kwargs: object) -> None:
@@ -47,7 +47,11 @@ class NotificationSendView(APIView):
         template_id = serializer.validated_data["template_id"]
         payload = serializer.validated_data["payload"]
         user = request.user
-        notification = self.service.create_notification(user, template_id, payload)
+        notification = self.service.create_notification(
+            user,
+            template_id,
+            payload
+        )
         return Response(
             NotificationSerializer(notification).data,
             status=HTTP_201_CREATED,
@@ -55,7 +59,7 @@ class NotificationSendView(APIView):
 
 
 class NotificationDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     service: NotificationService
 
     def __init__(self, **kwargs: object) -> None:
@@ -64,13 +68,16 @@ class NotificationDetailView(APIView):
 
     @get_notification_by_id_schema
     def get(self, request: Request, notification_id: int) -> Response:
-        notification = self.service.get_notification(request.user, notification_id)
+        notification = self.service.get_notification(
+            request.user,
+            notification_id
+        )
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=HTTP_200_OK)
 
 
 class NotificationStatsView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = (IsAdminUser, )
 
     def __init__(self, **kwargs: object) -> None:
         super().__init__(**kwargs)

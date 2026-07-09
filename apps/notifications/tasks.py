@@ -1,16 +1,25 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.utils import timezone
+from jinja2 import Template
+from celery import Task
 
 from config.celery import app
 from apps.notifications.models import Notification
-from jinja2 import Template
-from django.utils import timezone
 
 
 @app.task(bind=True, max_retries=3)
-def send_notification_task(self, notification_id: int):
+def send_notification_task(
+        self: Task,
+        notification_id: int
+) -> None:
     try:
         notification = Notification.objects.get(id=notification_id)
+    except Notification.DoesNotExist:
+        print(f"Notification with ID {notification_id} does not exist.")
+        return
+
+    try:
         content = notification.template.content
         rendered = Template(content).render(**notification.payload)
 
@@ -39,4 +48,5 @@ def send_notification_task(self, notification_id: int):
     except Exception as exc:
         notification.status = Notification.STATUS.FAILED
         notification.save()
+
         raise self.retry(exc=exc, countdown=2 ** self.request.retries)

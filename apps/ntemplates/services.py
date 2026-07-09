@@ -21,11 +21,18 @@ class TemplatesService:
             raise Http404(f"Template with id {template_id} not found")
         return template
 
-    def create_template(self, template_data: NotificationTemplate) -> NotificationTemplate:
+    def create_template(
+            self,
+            template_data: NotificationTemplate
+    ) -> NotificationTemplate:
         self.repo.create_template(template_data)
         return template_data
 
-    def update_template(self, template_id: int, template_data: NotificationTemplate) -> NotificationTemplate:
+    def update_template(
+            self,
+            template_id: int,
+            template_data: NotificationTemplate
+    ) -> NotificationTemplate:
         template = self.repo.get_template(template_id)
         if not template:
             raise Http404(f"Template with id {template_id} not found")

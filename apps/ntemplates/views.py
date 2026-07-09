@@ -2,7 +2,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
+from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT
+)
 from .models import NotificationTemplate
 from .serializers import TemplatesSerializer
 from .container import get_templates_service
@@ -17,7 +21,7 @@ from .swagger.schemas import (
 
 
 class TemplatesListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     service: TemplatesService
 
     def __init__(self, **kwargs: object) -> None:
@@ -43,7 +47,7 @@ class TemplatesListAPIView(APIView):
 
 
 class TemplatesDetailAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     service: TemplatesService
 
     def __init__(self, **kwargs: object) -> None:
@@ -85,6 +89,10 @@ class TemplatesDetailAPIView(APIView):
         )
 
     @delete_template_by_id_schema
-    def delete(self, request: Request, template_id: int) -> Response:
+    def delete(
+            self,
+            request: Request,
+            template_id: int
+    ) -> Response:
         self.service.delete_template(template_id)
         return Response(status=HTTP_204_NO_CONTENT)
