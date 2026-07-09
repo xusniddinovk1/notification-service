@@ -19,7 +19,7 @@ get_notification_by_id_schema = extend_schema(
 create_notification_schema = extend_schema(
     summary='Send a new notification',
     description='Send a notification to a user. Admin only.',
-    request=SendNotificationSerializer(),
+    request=SendNotificationSerializer,
     responses={201: NotificationSerializer()},
     tags=['notifications']
 )
