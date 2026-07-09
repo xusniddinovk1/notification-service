@@ -17,7 +17,7 @@ from ..swagger.schemas import (
 
 
 class UserPreferenceListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     service: UserPreferenceService
 
     def __init__(self, **kwargs: object) -> None:
@@ -43,7 +43,7 @@ class UserPreferenceListView(APIView):
 
 
 class UserPreferenceDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     service: UserPreferenceService
 
     def __init__(self, **kwargs: object) -> None:
@@ -63,7 +63,10 @@ class UserPreferenceDetailView(APIView):
         preference = self.service.get_user_preference(request.user, preference_id)
         preference.channel = serializer.validated_data['channel']
         preference.is_enabled = serializer.validated_data['is_enabled']
-        updated_preference = self.service.update_preference(request.user, preference_id, preference)
+        updated_preference = self.service.update_preference(
+            request.user,
+            preference_id,
+            preference)
         return Response(
             UserPreferenceSerializer(updated_preference).data,
             status=HTTP_200_OK

@@ -10,7 +10,10 @@ from .swagger.schemas import (
     create_notification_schema,
     notification_stats_schema
 )
-from .serializer import NotificationSerializer, SendNotificationSerializer
+from .serializer import (
+    NotificationSerializer,
+    SendNotificationSerializer
+)
 from .services import NotificationService
 
 

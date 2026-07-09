@@ -61,12 +61,24 @@ class TemplatesDetailAPIView(APIView):
         serializer = TemplatesSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         template = self.service.get_template(template_id)
-        template.title = serializer.validated_data.get('title', template.title)
-        template.subject = serializer.validated_data.get('subject', template.subject)
-        template.content = serializer.validated_data.get('content', template.content)
-        template.channel = serializer.validated_data.get('channel', template.channel)
-        template.is_active = serializer.validated_data.get('is_active', template.is_active)
-        updated_template = self.service.update_template(template_id, template)
+        template.title = serializer.validated_data.get(
+            'title', template.title
+        )
+        template.subject = serializer.validated_data.get(
+            'subject', template.subject
+        )
+        template.content = serializer.validated_data.get(
+            'content', template.content
+        )
+        template.channel = serializer.validated_data.get(
+            'channel', template.channel
+        )
+        template.is_active = serializer.validated_data.get(
+            'is_active', template.is_active
+        )
+        updated_template = self.service.update_template(
+            template_id, template
+        )
         return Response(
             TemplatesSerializer(updated_template).data,
             status=HTTP_200_OK,

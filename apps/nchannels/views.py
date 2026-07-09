@@ -17,7 +17,7 @@ from .swagger.schemas import (
 
 
 class ChannelListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     service: NotificationChannelService
 
     def __init__(self, **kwargs: object) -> None:
@@ -43,7 +43,7 @@ class ChannelListAPIView(APIView):
 
 
 class ChannelDetailAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     service: NotificationChannelService
 
     def __init__(self, **kwargs: object) -> None:
@@ -64,7 +64,10 @@ class ChannelDetailAPIView(APIView):
         channel.channel = serializer.validated_data.get('channel', channel.channel)
         channel.is_active = serializer.validated_data.get('is_active', channel.is_active)
         updated_channel = self.service.update_channel(channel_id, channel)
-        return Response(NotificationChannelSerializer(updated_channel).data, status=HTTP_200_OK)
+        return Response(
+            NotificationChannelSerializer(updated_channel).data,
+            status=HTTP_200_OK
+        )
 
     @delete_channel_by_id_schema
     def delete(self, request: Request, channel_id: int) -> Response:

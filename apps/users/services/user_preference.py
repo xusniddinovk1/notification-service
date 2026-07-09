@@ -9,10 +9,17 @@ class UserPreferenceService:
     def __init__(self, repo: UserPreferenceRepository) -> None:
         self.repo = repo
 
-    def list_preferences(self, user) -> QuerySet[Preference]:
+    def list_preferences(
+            self,
+            user
+    ) -> QuerySet[Preference]:
         return self.repo.get_channel_preferences(user)
 
-    def get_user_preference(self, user, preference_id: int) -> Preference:
+    def get_user_preference(
+            self,
+            user,
+            preference_id: int
+    ) -> Preference:
         preference = self.repo.get_channel_preference(preference_id)
         if not preference:
             raise Http404(f"Preference with id {preference_id} not found")
@@ -24,10 +31,17 @@ class UserPreferenceService:
         self.repo.create_preference(preference)
         return preference
 
-    def update_preference(self, user, preference_id: int, preference_data: Preference) -> Preference:
+    def update_preference(
+            self,
+            user,
+            preference_id: int,
+            preference_data: Preference
+    ) -> Preference:
         preference = self.get_user_preference(user, preference_id)
         if not preference:
-            raise Http404(f"Preference with id {preference_id} not found")
+            raise Http404(
+                f"Preference with id {preference_id} not found"
+            )
         self.repo.update_preference(preference_data)
         return preference_data
 

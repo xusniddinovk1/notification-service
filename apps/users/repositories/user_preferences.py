@@ -8,10 +8,17 @@ class UserPreferenceRepository:
     def get_channel_preference(self, preference_id: int):
         return Preference.objects.filter(id=preference_id).first()
 
-    def get_preference_by_user_and_channel(self, user, channel) -> Preference:
+    def get_preference_by_user_and_channel(
+            self,
+            user,
+            channel
+    ) -> Preference:
         return Preference.objects.filter(user=user, channel=channel).first()
 
-    def create_preference(self, entity: Preference) -> Preference:
+    def create_preference(
+            self,
+            entity: Preference
+    ) -> Preference:
         entity.save()
         return entity
 
@@ -19,5 +26,5 @@ class UserPreferenceRepository:
         preference.save()
         return preference
 
-    def delete_preference(self, preference_id: int):
+    def delete_preference(self, preference_id: int) -> None:
         Preference.objects.filter(id=preference_id).delete()

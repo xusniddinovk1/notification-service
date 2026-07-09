@@ -1,6 +1,6 @@
 from django.db.models import QuerySet, Count, Q
 
-from .models import Notification, notification
+from .models import Notification
 from ..ntemplates.models import NotificationTemplate
 
 
@@ -31,11 +31,17 @@ class NotificationRepository:
         )
         return stats, by_channel
 
-    def create_notification(self, notification: Notification) -> Notification:
+    def create_notification(
+            self,
+            notification: Notification
+    ) -> Notification:
         notification.save()
         return notification
 
-    def update_notification(self, notification: Notification) -> Notification:
+    def update_notification(
+            self,
+            notification: Notification
+    ) -> Notification:
         notification.save()
         return notification
 
