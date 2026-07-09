@@ -1,7 +1,7 @@
 from ..channel_serializer import NotificationChannelSerializer
 from drf_spectacular.utils import extend_schema
 
-list_channel_schema = extend_schema(
+list_channels_schema = extend_schema(
     summary='List of all channels',
     description='List of all channels',
     responses={

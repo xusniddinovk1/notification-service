@@ -8,7 +8,7 @@ from .channel_service import NotificationChannelService
 from .container import get_channel_service
 from .models import NotificationChannel
 from .swagger.schemas import (
-    list_channel_schema,
+    list_channels_schema,
     get_channel_schema,
     create_channel_schema,
     update_channel_by_id_schema,
@@ -24,7 +24,7 @@ class ChannelListAPIView(APIView):
         super().__init__(**kwargs)
         self.service = get_channel_service()
 
-    @list_channel_schema
+    @list_channels_schema
     def get(self, request: Request) -> Response:
         channels_list = self.service.list_channels()
         serializer = NotificationChannelSerializer(channels_list, many=True)
