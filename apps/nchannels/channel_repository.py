@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db.models import QuerySet
 
 from apps.nchannels.models import NotificationChannel
@@ -7,7 +9,7 @@ class NotificationChannelRepository:
     def get_all_channel(self) -> QuerySet[NotificationChannel]:
         return NotificationChannel.objects.all()
 
-    def get_channel_by_id(self, channel_id: int) -> NotificationChannel:
+    def get_channel_by_id(self, channel_id: int) -> Optional[NotificationChannel]:
         return NotificationChannel.objects.filter(id=channel_id).first()
 
     def create_channel(self, entity: NotificationChannel) -> NotificationChannel:

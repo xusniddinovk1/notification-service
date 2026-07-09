@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from rest_framework import serializers
 
 from apps.ntemplates.models import NotificationTemplate
@@ -6,5 +8,13 @@ from apps.ntemplates.models import NotificationTemplate
 class TemplatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = NotificationTemplate
-        fields = ["id", "title", "subject", "content", "channel", "is_active", "created_at"]
-        read_only_fields = ["id", "created_at"]
+        fields: ClassVar[list[str]] = [
+            "id",
+            "title",
+            "subject",
+            "content",
+            "channel",
+            "is_active",
+            "created_at",
+        ]
+        read_only_fields: ClassVar[list[str]] = ["id", "created_at"]

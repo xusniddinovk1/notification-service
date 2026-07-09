@@ -9,20 +9,35 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('nchannels', '0001_initial'),
+        ("nchannels", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NotificationTemplate',
+            name="NotificationTemplate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=150)),
-                ('subject', models.CharField(blank=True, max_length=255, null=True)),
-                ('content', models.TextField()),
-                ('is_active', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('channel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notification_templates', to='nchannels.notificationchannel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=150)),
+                ("subject", models.CharField(blank=True, max_length=255, null=True)),
+                ("content", models.TextField()),
+                ("is_active", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "channel",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notification_templates",
+                        to="nchannels.notificationchannel",
+                    ),
+                ),
             ],
         ),
     ]

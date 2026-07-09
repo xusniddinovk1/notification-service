@@ -8,7 +8,6 @@ urlpatterns = [
     path("api/v1/channels/", include("apps.nchannels.urls")),
     path("api/v1/templates/", include("apps.ntemplates.urls")),
     path("api/v1/notifications/", include("apps.notifications.urls")),
-
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/schema/swagger-ui/",

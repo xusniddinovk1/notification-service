@@ -1,3 +1,4 @@
+from typing import cast, TYPE_CHECKING
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
@@ -12,12 +13,15 @@ from ..swagger.schemas import (
     get_user_preference_schema,
     create_user_preference_schema,
     update_user_preference_schema,
-    delete_user_preference_schema
+    delete_user_preference_schema,
 )
+
+if TYPE_CHECKING:
+    from apps.users.models.users import User
 
 
 class UserPreferenceListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
     service: UserPreferenceService
 
     def __init__(self, **kwargs: object) -> None:
@@ -26,7 +30,8 @@ class UserPreferenceListView(APIView):
 
     @list_user_preferences_schema
     def get(self, request: Request) -> Response:
-        user_preferences = self.service.list_preferences(request.user)
+        current_user = cast("User", request.user)
+        user_preferences = self.service.list_preferences(user=current_user)
         serializer = UserPreferenceSerializer(user_preferences, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
 
@@ -34,16 +39,16 @@ class UserPreferenceListView(APIView):
     def post(self, request: Request) -> Response:
         serializer = UserPreferenceSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        preference = Preference(user=request.user, **serializer.validated_data)
+        current_user = cast("User", request.user)
+        preference = Preference(user=current_user, **serializer.validated_data)
         created_preference = self.service.create_preference(preference)
         return Response(
-            UserPreferenceSerializer(created_preference).data,
-            status=HTTP_201_CREATED
+            UserPreferenceSerializer(created_preference).data, status=HTTP_201_CREATED
         )
 
 
 class UserPreferenceDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
     service: UserPreferenceService
 
     def __init__(self, **kwargs: object) -> None:
@@ -52,7 +57,8 @@ class UserPreferenceDetailView(APIView):
 
     @get_user_preference_schema
     def get(self, request: Request, preference_id: int) -> Response:
-        user_preference = self.service.get_user_preference(request.user, preference_id)
+        current_user = cast("User", request.user)
+        user_preference = self.service.get_user_preference(current_user, preference_id)
         serializer = UserPreferenceSerializer(user_preference)
         return Response(serializer.data, status=HTTP_200_OK)
 
@@ -60,16 +66,19 @@ class UserPreferenceDetailView(APIView):
     def put(self, request: Request, preference_id: int) -> Response:
         serializer = UserPreferenceSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        preference = self.service.get_user_preference(request.user, preference_id)
-        preference.channel = serializer.validated_data['channel']
-        preference.is_enabled = serializer.validated_data['is_enabled']
-        updated_preference = self.service.update_preference(request.user, preference_id, preference)
+        current_user = cast("User", request.user)
+        preference = self.service.get_user_preference(current_user, preference_id)
+        preference.channel = serializer.validated_data["channel"]
+        preference.is_enabled = serializer.validated_data["is_enabled"]
+        updated_preference = self.service.update_preference(
+            current_user, preference_id, preference
+        )
         return Response(
-            UserPreferenceSerializer(updated_preference).data,
-            status=HTTP_200_OK
+            UserPreferenceSerializer(updated_preference).data, status=HTTP_200_OK
         )
 
     @delete_user_preference_schema
     def delete(self, request: Request, preference_id: int) -> Response:
-        self.service.delete_preference(request.user, preference_id)
+        current_user = cast("User", request.user)
+        self.service.delete_preference(current_user, preference_id)
         return Response(status=HTTP_204_NO_CONTENT)

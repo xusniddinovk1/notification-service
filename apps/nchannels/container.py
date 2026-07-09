@@ -7,8 +7,4 @@ def get_channel_repository() -> NotificationChannelRepository:
 
 
 def get_channel_service() -> NotificationChannelService:
-    return NotificationChannelService(
-        repo=get_channel_repository()
-    )
-
-
+    return NotificationChannelService(repo=get_channel_repository())

@@ -1,0 +1,45 @@
+
+setup:
+	uv run manage.py makemigrations
+	uv run manage.py migrate
+	uv run manage.py createsuperuser
+	uv run manage.py createcachetable
+
+dev:
+	uv run manage.py runserver 0.0.0.0:8000
+
+docker:
+	docker rm platform-questions-backend || true
+	docker run -d -p 8000:8000 platform-questions-backend
+
+pre-prod:
+	docker-compose -f docker/docker-compose.yaml build
+	docker-compose -f docker/docker-compose.yaml up
+
+stop:
+	docker-compose -f docker/docker-compose.yaml down
+
+lint:
+	uv run ruff check --fix
+
+format:
+	uv run black .
+
+typecheck:
+	uv run mypy .
+
+test:
+	uv run python manage.py test
+
+all-migrations:
+	uv run manage.py makemigrations
+	uv run manage.py migrate
+	uv run manage.py createcachetable
+
+check-migration:
+	uv run python manage.py makemigrations --check --dry-run
+
+lint-deps:
+	uv run deptry .
+
+ci: format lint typecheck test lint-deps check-migration

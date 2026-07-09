@@ -5,14 +5,14 @@ list_templates_schema = extend_schema(
     summary="List of notification templates",
     description="List of notification templates",
     responses={200: TemplatesSerializer(many=True)},
-    tags=["templates"]
+    tags=["templates"],
 )
 
 get_template_by_id_schema = extend_schema(
     summary="Get template",
     description="Get template data by id",
     responses={200: TemplatesSerializer()},
-    tags=["templates"]
+    tags=["templates"],
 )
 
 create_template_schema = extend_schema(
@@ -20,7 +20,7 @@ create_template_schema = extend_schema(
     description="Create template data",
     request=TemplatesSerializer,
     responses={200: TemplatesSerializer()},
-    tags=["templates"]
+    tags=["templates"],
 )
 
 update_template_by_id_schema = extend_schema(
@@ -28,12 +28,12 @@ update_template_by_id_schema = extend_schema(
     description="Update template data by id",
     request=TemplatesSerializer,
     responses={200: TemplatesSerializer()},
-    tags=["templates"]
+    tags=["templates"],
 )
 
 delete_template_by_id_schema = extend_schema(
     summary="Delete template",
     description="Delete template data",
     responses={204: None},
-    tags=["templates"]
+    tags=["templates"],
 )

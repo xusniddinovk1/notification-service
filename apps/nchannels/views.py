@@ -12,12 +12,12 @@ from .swagger.schemas import (
     get_channel_schema,
     create_channel_schema,
     update_channel_by_id_schema,
-    delete_channel_by_id_schema
+    delete_channel_by_id_schema,
 )
 
 
 class ChannelListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
     service: NotificationChannelService
 
     def __init__(self, **kwargs: object) -> None:
@@ -37,13 +37,12 @@ class ChannelListAPIView(APIView):
         channel = NotificationChannel(**serializer.validated_data)
         created_channel = self.service.create_channel(channel)
         return Response(
-            NotificationChannelSerializer(created_channel).data,
-            status=HTTP_201_CREATED
+            NotificationChannelSerializer(created_channel).data, status=HTTP_201_CREATED
         )
 
 
 class ChannelDetailAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
     service: NotificationChannelService
 
     def __init__(self, **kwargs: object) -> None:
@@ -61,10 +60,12 @@ class ChannelDetailAPIView(APIView):
         serializer = NotificationChannelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         channel = self.service.get_channel(channel_id)
-        channel.channel = serializer.validated_data.get('channel', channel.channel)
-        channel.is_active = serializer.validated_data.get('is_active', channel.is_active)
+        channel.channel = serializer.validated_data.get("channel", channel.channel)
+        channel.is_active = serializer.validated_data.get("is_active", channel.is_active)
         updated_channel = self.service.update_channel(channel_id, channel)
-        return Response(NotificationChannelSerializer(updated_channel).data, status=HTTP_200_OK)
+        return Response(
+            NotificationChannelSerializer(updated_channel).data, status=HTTP_200_OK
+        )
 
     @delete_channel_by_id_schema
     def delete(self, request: Request, channel_id: int) -> Response:

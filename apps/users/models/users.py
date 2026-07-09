@@ -1,3 +1,5 @@
+from typing import ClassVar, List, Optional
+
 from django.contrib.auth.models import (
     BaseUserManager,
     AbstractBaseUser,
@@ -8,16 +10,21 @@ from django.db import models
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(
+        self, email: str, password: Optional[str] = None, **extra_fields: str | bool
+    ) -> AbstractBaseUser:
         if not email:
             raise ValueError("The Email field must be set")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
+        assert isinstance(user, AbstractBaseUser)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(
+        self, email: str, password: Optional[str] = None, **extra_fields: str | bool
+    ) -> AbstractBaseUser:
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -40,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: ClassVar[List[str]] = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.email

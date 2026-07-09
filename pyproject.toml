@@ -1,7 +1,7 @@
 [project]
 name = "notification-service"
 version = "0.1.0"
-description = "Add your description here"
+description = "Notification Service — a centralized backend service for sending Email, SMS, and In-App"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -18,3 +18,64 @@ dependencies = [
     "sendgrid>=6.12.5",
     "twilio>=9.10.9",
 ]
+
+[tool.black]
+line_length = 90
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+line-length = 90
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "ANN", "RUF"]
+ignore = ["D100", "D101", "RUF001"]
+
+[tool.ruff.lint.per-file-ignores]
+"config/settings/*.py" = ["F403", "F405"]
+"apps/**/migrations/*.py" = ["RUF012", "E501", "ANN201", "ANN001"]
+
+
+
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+
+ignore_missing_imports = false
+follow_imports = "normal"
+
+disable_error_code = ["untyped-decorator", "import-untyped"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings.dev"
+strict_settings = true
+strict_model_abstract_attrs = true
+[[tool.mypy.overrides]]
+module = [
+    "drf_spectacular",
+    "drf_spectacular.*",
+    "environ",
+    "rest_framework.serializers",
+    "jwt",
+    "jwt.*",
+]
+ignore_errors = false
+
+
+
+[dependency-groups]
+dev = [
+    "black>=25.12.0",
+    "deptry>=0.25.1",
+    "django-stubs>=5.2.8",
+    "djangorestframework-stubs>=3.16.7",
+    "mypy>=1.19.1",
+    "ruff>=0.14.13",
+    "types-requests>=2.32.0",
+]
+
+
+[tool.deptry]
+per_rule_ignores = { DEP002 = ["colorlog", "django-celery-results", "sendgrid", "twilio", "django-anymail", "django-filter", "django-stubs", "djangorestframework-simplejwt", "gunicorn", "psycopg2-binary", "cryptography", "whitenoise", "redis", "logtail-python"] }
