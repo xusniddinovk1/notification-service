@@ -7,10 +7,15 @@ from .models import NotificationTemplate
 from .serializers import TemplatesSerializer
 from .container import get_templates_service
 from .services import TemplatesService
-from drf_spectacular.utils import extend_schema
+from .swagger.schemas import (
+    list_templates_schema,
+    get_template_by_id_schema,
+    create_template_schema,
+    update_template_by_id_schema,
+    delete_template_by_id_schema
+)
 
 
-@extend_schema(tags=['Templates'], request=TemplatesSerializer, responses=TemplatesSerializer)
 class TemplatesListAPIView(APIView):
     permission_classes = [IsAuthenticated]
     service: TemplatesService
@@ -19,11 +24,13 @@ class TemplatesListAPIView(APIView):
         super().__init__(**kwargs)
         self.service = get_templates_service()
 
+    @list_templates_schema
     def get(self, request: Request) -> Response:
         templates_list = self.service.list_templates()
         serializer = TemplatesSerializer(templates_list, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
 
+    @create_template_schema
     def post(self, request: Request) -> Response:
         serializer = TemplatesSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -35,7 +42,6 @@ class TemplatesListAPIView(APIView):
         )
 
 
-@extend_schema(tags=['Templates'])
 class TemplatesDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
     service: TemplatesService
@@ -44,11 +50,13 @@ class TemplatesDetailAPIView(APIView):
         super().__init__(**kwargs)
         self.service = get_templates_service()
 
+    @get_template_by_id_schema
     def get(self, request: Request, template_id: int) -> Response:
         template = self.service.get_template(template_id)
         serializer = TemplatesSerializer(template)
         return Response(serializer.data, status=HTTP_200_OK)
 
+    @update_template_by_id_schema
     def put(self, request: Request, template_id: int) -> Response:
         serializer = TemplatesSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -64,6 +72,7 @@ class TemplatesDetailAPIView(APIView):
             status=HTTP_200_OK,
         )
 
+    @delete_template_by_id_schema
     def delete(self, request: Request, template_id: int) -> Response:
         self.service.delete_template(template_id)
         return Response(status=HTTP_204_NO_CONTENT)

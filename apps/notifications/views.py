@@ -4,13 +4,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 from .container import get_notification_service
-from drf_spectacular.utils import extend_schema
-
+from .swagger.schemas import (
+    list_notifications_schema,
+    get_notification_by_id_schema,
+    create_notification_schema,
+    notification_stats_schema
+)
 from .serializer import NotificationSerializer, SendNotificationSerializer
 from .services import NotificationService
 
 
-@extend_schema(tags=["notifications"], request=NotificationSerializer, responses=NotificationSerializer)
 class NotificationListView(APIView):
     permission_classes = [IsAuthenticated]
     service: NotificationService
@@ -19,13 +22,13 @@ class NotificationListView(APIView):
         super().__init__(**kwargs)
         self.service = get_notification_service()
 
+    @list_notifications_schema
     def get(self, request: Request) -> Response:
         notifications = self.service.list_notifications(request.user)
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
 
 
-@extend_schema(tags=["notifications"], responses=NotificationSerializer, request=SendNotificationSerializer)
 class NotificationSendView(APIView):
     permission_classes = [IsAdminUser]
     service: NotificationService
@@ -34,6 +37,7 @@ class NotificationSendView(APIView):
         super().__init__(**kwargs)
         self.service = get_notification_service()
 
+    @create_notification_schema
     def post(self, request: Request) -> Response:
         serializer = SendNotificationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -47,7 +51,6 @@ class NotificationSendView(APIView):
         )
 
 
-@extend_schema(tags=["notifications"], responses=NotificationSerializer, request=NotificationSerializer)
 class NotificationDetailView(APIView):
     permission_classes = [IsAuthenticated]
     service: NotificationService
@@ -56,13 +59,13 @@ class NotificationDetailView(APIView):
         super().__init__(**kwargs)
         self.service = get_notification_service()
 
+    @get_notification_by_id_schema
     def get(self, request: Request, notification_id: int) -> Response:
         notification = self.service.get_notification(request.user, notification_id)
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=HTTP_200_OK)
 
 
-@extend_schema(tags=["stats"])
 class NotificationStatsView(APIView):
     permission_classes = [IsAdminUser]
 
@@ -70,6 +73,7 @@ class NotificationStatsView(APIView):
         super().__init__(**kwargs)
         self.service = get_notification_service()
 
+    @notification_stats_schema
     def get(self, request: Request) -> Response:
         stats = self.service.get_stats()
         return Response(stats, status=HTTP_200_OK)

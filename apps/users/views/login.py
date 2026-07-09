@@ -1,11 +1,12 @@
-from drf_spectacular.utils import extend_schema
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from ..swagger.schemas import login_user_schema, refresh_token_schema
 
 
-@extend_schema(tags=["auth"])
+@login_user_schema
 class LoginView(TokenObtainPairView):
     pass
 
-@extend_schema(tags=["auth"])
-class TokenRefreshView(TokenRefreshView):
+
+@refresh_token_schema
+class TokenView(TokenRefreshView):
     pass
