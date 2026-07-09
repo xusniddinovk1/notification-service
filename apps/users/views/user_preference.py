@@ -7,10 +7,15 @@ from ..models.user_preference import Preference
 from ..container import get_preference_service
 from ..serializers.user_preference import UserPreferenceSerializer
 from ..services.user_preference import UserPreferenceService
-from drf_spectacular.utils import extend_schema
+from ..swagger.schemas import (
+    list_user_preferences_schema,
+    get_user_preference_schema,
+    create_user_preference_schema,
+    update_user_preference_schema,
+    delete_user_preference_schema
+)
 
 
-@extend_schema(tags=['user_preference'], request=UserPreferenceSerializer, responses=UserPreferenceSerializer)
 class UserPreferenceListView(APIView):
     permission_classes = [IsAuthenticated]
     service: UserPreferenceService
@@ -19,11 +24,13 @@ class UserPreferenceListView(APIView):
         super().__init__(**kwargs)
         self.service = get_preference_service()
 
+    @list_user_preferences_schema
     def get(self, request: Request) -> Response:
         user_preferences = self.service.list_preferences(request.user)
         serializer = UserPreferenceSerializer(user_preferences, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
 
+    @create_user_preference_schema
     def post(self, request: Request) -> Response:
         serializer = UserPreferenceSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -35,7 +42,6 @@ class UserPreferenceListView(APIView):
         )
 
 
-@extend_schema(tags=['user_preference'], request=UserPreferenceSerializer, responses=UserPreferenceSerializer)
 class UserPreferenceDetailView(APIView):
     permission_classes = [IsAuthenticated]
     service: UserPreferenceService
@@ -44,11 +50,13 @@ class UserPreferenceDetailView(APIView):
         super().__init__(**kwargs)
         self.service = get_preference_service()
 
+    @get_user_preference_schema
     def get(self, request: Request, preference_id: int) -> Response:
         user_preference = self.service.get_user_preference(request.user, preference_id)
         serializer = UserPreferenceSerializer(user_preference)
         return Response(serializer.data, status=HTTP_200_OK)
 
+    @update_user_preference_schema
     def put(self, request: Request, preference_id: int) -> Response:
         serializer = UserPreferenceSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -61,6 +69,7 @@ class UserPreferenceDetailView(APIView):
             status=HTTP_200_OK
         )
 
+    @delete_user_preference_schema
     def delete(self, request: Request, preference_id: int) -> Response:
         self.service.delete_preference(request.user, preference_id)
         return Response(status=HTTP_204_NO_CONTENT)
