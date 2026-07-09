@@ -7,6 +7,4 @@ def get_templates_repostory() -> TemplatesRepository:
 
 
 def get_templates_service() -> TemplatesService:
-    return TemplatesService(
-        repo=get_templates_repostory()
-    )
+    return TemplatesService(repo=get_templates_repostory())

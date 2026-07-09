@@ -9,10 +9,7 @@ from apps.notifications.models import Notification
 
 
 @app.task(bind=True, max_retries=3)
-def send_notification_task(
-        self: Task,
-        notification_id: int
-) -> None:
+def send_notification_task(self: Task, notification_id: int) -> None:
     try:
         notification = Notification.objects.get(id=notification_id)
     except Notification.DoesNotExist:
@@ -29,7 +26,7 @@ def send_notification_task(
             print(f"Subject: {notification.template.subject}")
             print(f"Content: {rendered}")
             send_mail(
-                subject=notification.template.subject,
+                subject=notification.template.subject or "No subject",
                 message=rendered,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[notification.user.email],
@@ -49,4 +46,4 @@ def send_notification_task(
         notification.status = Notification.STATUS.FAILED
         notification.save()
 
-        raise self.retry(exc=exc, countdown=2 ** self.request.retries)
+        raise self.retry(exc=exc, countdown=2**self.request.retries)

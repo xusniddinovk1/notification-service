@@ -15,14 +15,14 @@ class NotificationSerializer(serializers.ModelSerializer):
             "payload",
             "status",
             "created_at",
-            "sent_at"
+            "sent_at",
         ]
         read_only_fields: ClassVar[list[str]] = [
             "id",
             "user",
             "status",
             "created_at",
-            "sent_at"
+            "sent_at",
         ]
 
 

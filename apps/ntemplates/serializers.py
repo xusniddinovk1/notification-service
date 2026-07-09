@@ -15,6 +15,6 @@ class TemplatesSerializer(serializers.ModelSerializer):
             "content",
             "channel",
             "is_active",
-            "created_at"
+            "created_at",
         ]
         read_only_fields: ClassVar[list[str]] = ["id", "created_at"]

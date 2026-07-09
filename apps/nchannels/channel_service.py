@@ -7,8 +7,8 @@ from apps.nchannels.models import NotificationChannel
 
 class NotificationChannelService:
     def __init__(
-            self,
-            repo: NotificationChannelRepository,
+        self,
+        repo: NotificationChannelRepository,
     ) -> None:
         self.repo = repo
 
@@ -21,17 +21,12 @@ class NotificationChannelService:
             raise Http404("Channel not found")
         return channel
 
-    def create_channel(
-            self,
-            channel_data: NotificationChannel
-    ) -> NotificationChannel:
+    def create_channel(self, channel_data: NotificationChannel) -> NotificationChannel:
         self.repo.create_channel(channel_data)
         return channel_data
 
     def update_channel(
-            self,
-            channel_id: int,
-            channel_data: NotificationChannel
+        self, channel_id: int, channel_data: NotificationChannel
     ) -> NotificationChannel:
         channel = self.repo.get_channel_by_id(channel_id)
         if not channel:

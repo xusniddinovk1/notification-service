@@ -7,8 +7,8 @@ from .repositories import TemplatesRepository
 
 class TemplatesService:
     def __init__(
-            self,
-            repo: TemplatesRepository,
+        self,
+        repo: TemplatesRepository,
     ) -> None:
         self.repo = repo
 
@@ -22,16 +22,13 @@ class TemplatesService:
         return template
 
     def create_template(
-            self,
-            template_data: NotificationTemplate
+        self, template_data: NotificationTemplate
     ) -> NotificationTemplate:
         self.repo.create_template(template_data)
         return template_data
 
     def update_template(
-            self,
-            template_id: int,
-            template_data: NotificationTemplate
+        self, template_id: int, template_data: NotificationTemplate
     ) -> NotificationTemplate:
         template = self.repo.get_template(template_id)
         if not template:

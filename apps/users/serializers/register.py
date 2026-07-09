@@ -13,15 +13,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields: ClassVar[list[str]] = [
-            "email",
-            "password",
-            "first_name",
-            "last_name"]
+        fields: ClassVar[list[str]] = ["email", "password", "first_name", "last_name"]
 
-    def create(
-            self,
-            validated_data: dict[str, str]
-    ) -> tuple[User, dict[str, str]]:
+    def create(self, validated_data: dict[str, str]) -> tuple[User, dict[str, str]]:
         service = UserRegisterService(repo=UserRepository())
         return service.register(**validated_data)

@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from typing import Optional, Any, TYPE_CHECKING
 from django.db.models import QuerySet
 from django.http import Http404
 from rest_framework.exceptions import ValidationError
@@ -8,14 +8,13 @@ from .models import Notification
 from .repositories import NotificationRepository
 from ..users.repositories.user_preferences import UserPreferenceRepository
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from apps.users.models.users import User
 
 
 class NotificationService:
     def __init__(
-            self,
-            repo: NotificationRepository,
-            preference_repo: UserPreferenceRepository
+        self, repo: NotificationRepository, preference_repo: UserPreferenceRepository
     ) -> None:
         self.repo = repo
         self.preference_repo = preference_repo
@@ -23,19 +22,12 @@ class NotificationService:
     def get_notifications(self) -> QuerySet[Notification]:
         return self.repo.get_all_notifications()
 
-    def list_notifications(
-            self,
-            user: User
-    ) -> QuerySet[Notification]:
+    def list_notifications(self, user: "User") -> QuerySet[Notification]:
         if user.is_staff:
             return self.repo.get_all_notifications()
         return self.repo.get_user_notifications(user=user)
 
-    def get_notification(
-            self,
-            user: User,
-            notification_id: int
-    ) -> Notification:
+    def get_notification(self, user: "User", notification_id: int) -> Notification:
         notification = self.repo.get_notification(notification_id)
         if not notification:
             raise Http404(f"Notification with id {notification_id} not found")
@@ -44,10 +36,7 @@ class NotificationService:
         return notification
 
     def create_notification(
-            self,
-            user: User,
-            template_id: int,
-            payload: dict
+        self, user: "User", template_id: int, payload: dict
     ) -> Notification:
         template = self.repo.get_template_by_id(template_id)
         if not template:
@@ -64,7 +53,7 @@ class NotificationService:
             user=user,
             template=template,
             payload=payload,
-            status=Notification.STATUS.PENDING
+            status=Notification.STATUS.PENDING,
         )
         self.repo.create_notification(notification)
         send_notification_task.delay(notification.id)
@@ -72,25 +61,26 @@ class NotificationService:
         return notification
 
     def update_status(
-            self,
-            notification_id: int,
-            status: str
-    ) -> Notification:
-        notification = self.get_notification(notification_id)
+        self, user: "User", notification_id: int, status: str
+    ) -> Optional[Notification]:
+        notification = self.get_notification(user=user, notification_id=notification_id)
+
+        if notification is None:
+            return None
+
         notification.status = status
         self.repo.update_notification(notification)
         return notification
 
-    def get_stats(self) -> dict:
+    def get_stats(self) -> dict[str, Any]:
         stats, by_channel = self.repo.get_stats()
 
-        total = stats['total']
-        sent = stats['sent']
+        total = stats["total"]
+        sent = stats["sent"]
         delivery_rate = f"{(sent / total * 100):.1f}%" if total > 0 else "0%"
 
         channel_stats = {
-            item['template__channel__channel']: item['count']
-            for item in by_channel
+            item["template__channel__channel"]: item["count"] for item in by_channel
         }
 
         return {

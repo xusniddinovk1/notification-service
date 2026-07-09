@@ -4,15 +4,9 @@ from apps.nchannels.models import NotificationChannel
 
 
 class Preference(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="preference"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="preference")
     channel = models.ForeignKey(
-        NotificationChannel,
-        on_delete=models.CASCADE,
-        related_name="preference"
+        NotificationChannel, on_delete=models.CASCADE, related_name="preference"
     )
     is_enabled = models.BooleanField(default=True)
 

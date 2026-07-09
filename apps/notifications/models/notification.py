@@ -9,25 +9,16 @@ class Notification(models.Model):
         SENT = "SENT"
         FAILED = "FAILED"
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="notifications"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
     template = models.ForeignKey(
-        NotificationTemplate,
-        on_delete=models.CASCADE,
-        related_name="notifications"
+        NotificationTemplate, on_delete=models.CASCADE, related_name="notifications"
     )
     payload = models.JSONField(default=dict)
     status = models.CharField(
-        max_length=20,
-        choices=STATUS.choices,
-        default=STATUS.PENDING
+        max_length=20, choices=STATUS.choices, default=STATUS.PENDING
     )
     sent_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return self.payload["title"]
-
