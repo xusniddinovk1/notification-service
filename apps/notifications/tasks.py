@@ -1,12 +1,18 @@
-from django.conf import settings
-from django.core.mail import send_mail
 from django.utils import timezone
-from jinja2 import Template
 from celery import Task
 
+from apps.notifications.senders.base import BaseSender
+from apps.notifications.senders.email import EmailSender
+from apps.notifications.senders.in_app import InAPPSender
+from apps.notifications.senders.sms import SMSSender
 from config.celery import app
 from apps.notifications.models import Notification
 
+SENDER: dict[str, type[BaseSender]] = {
+    "EMAIL": EmailSender,
+    "SMS": SMSSender,
+    "IN_APP": InAPPSender,
+}
 
 @app.task(bind=True, max_retries=3)
 def send_notification_task(self: Task, notification_id: int) -> None:
@@ -17,26 +23,13 @@ def send_notification_task(self: Task, notification_id: int) -> None:
         return
 
     try:
-        content = notification.template.content
-        rendered = Template(content).render(**notification.payload)
-
         channel_type = notification.template.channel.channel
-        if channel_type == "EMAIL":
-            print(f"Sending email to: {notification.user.email}")
-            print(f"Subject: {notification.template.subject}")
-            print(f"Content: {rendered}")
-            send_mail(
-                subject=notification.template.subject or "No subject",
-                message=rendered,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[notification.user.email],
-                fail_silently=False,
-            )
-            print("Email sent successfully!")
-        elif channel_type == "SMS":
-            print(f"SMS {rendered}")
-        elif channel_type == "IN_APP":
-            print(f"IN_APP {rendered}")
+
+        sender = SENDER.get(channel_type)
+        if not sender:
+            raise ValueError(f"Unknown channel: {channel_type}")
+
+        sender().send(notification)
 
         notification.status = Notification.STATUS.SENT
         notification.sent_at = timezone.now()
