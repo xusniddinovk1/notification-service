@@ -1,4 +1,3 @@
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,6 +6,7 @@ from .channel_serializer import NotificationChannelSerializer
 from .channel_service import NotificationChannelService
 from .container import get_channel_service
 from .models import NotificationChannel
+from .permissions import IsAdminOrReadOnly
 from .swagger.schemas import (
     list_channels_schema,
     get_channel_schema,
@@ -17,7 +17,7 @@ from .swagger.schemas import (
 
 
 class ChannelListAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminOrReadOnly,)
     service: NotificationChannelService
 
     def __init__(self, **kwargs: object) -> None:
@@ -42,7 +42,7 @@ class ChannelListAPIView(APIView):
 
 
 class ChannelDetailAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminOrReadOnly,)
     service: NotificationChannelService
 
     def __init__(self, **kwargs: object) -> None:

@@ -1,4 +1,3 @@
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,10 +13,11 @@ from .swagger.schemas import (
     update_template_by_id_schema,
     delete_template_by_id_schema,
 )
+from ..nchannels.permissions import IsAdminOrReadOnly
 
 
 class TemplatesListAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminOrReadOnly,)
     service: TemplatesService
 
     def __init__(self, **kwargs: object) -> None:
@@ -43,7 +43,7 @@ class TemplatesListAPIView(APIView):
 
 
 class TemplatesDetailAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminOrReadOnly,)
     service: TemplatesService
 
     def __init__(self, **kwargs: object) -> None:
