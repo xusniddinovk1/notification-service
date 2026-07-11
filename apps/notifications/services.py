@@ -36,8 +36,12 @@ class NotificationService:
         return notification
 
     def create_notification(
-        self, user: "User", template_id: int, payload: dict
+        self, user_id: int, template_id: int, payload: dict
     ) -> Notification:
+        user = self.repo.get_user_by_id(user_id)
+        if not user:
+            raise Http404(f"User with id {user_id} not found")
+
         template = self.repo.get_template_by_id(template_id)
         if not template:
             raise Http404(f"Template with id {template_id} not found")

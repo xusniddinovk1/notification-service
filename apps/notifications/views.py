@@ -46,12 +46,11 @@ class NotificationSendView(APIView):
     def post(self, request: Request) -> Response:
         serializer = SendNotificationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        user_id = serializer.validated_data["user_id"]
         template_id = serializer.validated_data["template_id"]
         payload = serializer.validated_data["payload"]
-        current_user = cast("User", request.user)
-        notification = self.service.create_notification(
-            current_user, template_id, payload
-        )
+        # current_user = cast("User", request.user)
+        notification = self.service.create_notification(user_id, template_id, payload)
         return Response(
             NotificationSerializer(notification).data,
             status=HTTP_201_CREATED,

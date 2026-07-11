@@ -1,7 +1,7 @@
 from typing import Optional, Any, TYPE_CHECKING
 
 from django.db.models import QuerySet, Count, Q
-
+from apps.users.models import User
 from .models import Notification
 from ..ntemplates.models import NotificationTemplate
 
@@ -18,6 +18,9 @@ class NotificationRepository:
 
     def get_notification(self, notification_id: int) -> Optional[Notification]:
         return Notification.objects.filter(id=notification_id).first()
+
+    def get_user_by_id(self, user_id: int) -> Optional[User]:
+        return User.objects.filter(id=user_id).first()
 
     def get_template_by_id(self, template_id: int) -> Optional[NotificationTemplate]:
         return NotificationTemplate.objects.filter(id=template_id).first()
