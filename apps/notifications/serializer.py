@@ -27,5 +27,6 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 
 class SendNotificationSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
     template_id = serializers.IntegerField()
     payload = serializers.JSONField()
