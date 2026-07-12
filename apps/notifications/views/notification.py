@@ -13,6 +13,7 @@ from ..swagger.schemas import (
 )
 from ..serializers.notification import NotificationSerializer, SendNotificationSerializer
 from ..services import NotificationService
+from ..throttles import SendNotificationThrottle
 
 if TYPE_CHECKING:
     from apps.users.models.users import User
@@ -36,6 +37,7 @@ class NotificationListView(APIView):
 
 class NotificationSendView(APIView):
     permission_classes = (IsAdminUser,)
+    throttle_classes = [SendNotificationThrottle]
     service: NotificationService
 
     def __init__(self, **kwargs: object) -> None:

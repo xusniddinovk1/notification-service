@@ -36,6 +36,8 @@ ignore = ["D100", "D101", "RUF001"]
 [tool.ruff.lint.per-file-ignores]
 "config/settings/*.py" = ["F403", "F405"]
 "apps/**/migrations/*.py" = ["RUF012", "E501", "ANN201", "ANN001"]
+"apps/**/views/*.py" = ["RUF012"]
+"apps/**/views.py" = ["RUF012"]
 
 
 

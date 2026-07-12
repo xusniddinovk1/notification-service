@@ -84,6 +84,12 @@ REST_FRAMEWORK = {
     #     "django_filters.rest_framework.DjangoFilterBackend",
     # ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_RATES": {
+        "login": "5/minute",
+        "register": "3/minute",
+        "send": "10/minute",
+        "bulk-send": "3/minute",
+    },
 }
 
 SPECTACULAR_SETTINGS = {
