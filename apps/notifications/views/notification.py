@@ -4,15 +4,15 @@ from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
-from .container import get_notification_service
-from .swagger.schemas import (
+from ..container import get_notification_service
+from ..swagger.schemas import (
     list_notifications_schema,
     get_notification_by_id_schema,
     create_notification_schema,
     notification_stats_schema,
 )
-from .serializer import NotificationSerializer, SendNotificationSerializer
-from .services import NotificationService
+from ..serializers.notification import NotificationSerializer, SendNotificationSerializer
+from ..services import NotificationService
 
 if TYPE_CHECKING:
     from apps.users.models.users import User

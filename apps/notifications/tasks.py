@@ -14,6 +14,7 @@ SENDER: dict[str, type[BaseSender]] = {
     "IN_APP": InAPPSender,
 }
 
+
 @app.task(bind=True, max_retries=3)
 def send_notification_task(self: Task, notification_id: int) -> None:
     try:

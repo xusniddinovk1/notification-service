@@ -41,6 +41,11 @@ class NotificationRepository:
         notification.save()
         return notification
 
+    def bulk_create_notifications(
+        self, notifications: list[Notification]
+    ) -> list[Notification]:
+        return Notification.objects.bulk_create(notifications)
+
     def update_notification(self, notification: Notification) -> Notification:
         notification.save()
         return notification
