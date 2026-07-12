@@ -39,8 +39,7 @@ ignore = ["D100", "D101", "RUF001"]
 "apps/**/migrations/*.py" = ["RUF012", "E501", "ANN201", "ANN001"]
 "apps/**/views/*.py" = ["RUF012"]
 "apps/**/views.py" = ["RUF012"]
-
-
+"apps/**/tests/*.py" = ["ANN201", "ANN001"]
 
 
 [tool.mypy]
@@ -74,11 +73,18 @@ dev = [
     "deptry>=0.25.1",
     "django-stubs>=5.2.8",
     "djangorestframework-stubs>=3.16.7",
+    "factory-boy>=3.3.3",
     "mypy>=1.19.1",
+    "pytest>=9.1.1",
+    "pytest-django>=4.12.0",
+    "pytest-mock>=3.15.1",
     "ruff>=0.14.13",
     "types-requests>=2.32.0",
 ]
 
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.dev"
+python_files = ["test_*.py", "*_test.py"]
 
 [tool.deptry]
-per_rule_ignores = { DEP002 = ["colorlog", "django-celery-results", "sendgrid", "django-redis", "twilio", "django-anymail", "django-filter", "django-stubs", "djangorestframework-simplejwt", "gunicorn", "psycopg2-binary", "cryptography", "whitenoise", "redis", "logtail-python"] }
+per_rule_ignores = { DEP002 = ["colorlog", "django-celery-results", "sendgrid", "django-redis", "twilio", "django-anymail", "django-filter", "django-stubs", "djangorestframework-simplejwt", "gunicorn", "psycopg2-binary", "cryptography", "whitenoise", "redis", "logtail-python"], DEP004 = ["pytest", "pytest_mock"] }

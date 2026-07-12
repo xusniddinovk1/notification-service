@@ -29,7 +29,7 @@ typecheck:
 	uv run mypy .
 
 test:
-	uv run python manage.py test
+	uv run pytest
 
 all-migrations:
 	uv run manage.py makemigrations
