@@ -4,9 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from apps.users.serializers.register import RegisterSerializer
+from ..throttles import RegisterRateThrottle
 
 
 class RegisterView(APIView):
+    throttle_classes = [RegisterRateThrottle]
 
     @register_user_schema
     def post(self, request: Request) -> Response:

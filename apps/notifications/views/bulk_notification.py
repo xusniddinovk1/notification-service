@@ -8,10 +8,12 @@ from ..serializers.bulk_notification import BulkSendNotificationSerializer
 from ..serializers.notification import NotificationSerializer
 from ..services import NotificationService
 from ..swagger.schemas import bulk_send_notifications_schema
+from ..throttles import BulkSendThrottle
 
 
 class BulkSendNotificationView(APIView):
     permission_classes = (IsAdminUser,)
+    throttle_classes = [BulkSendThrottle]
     service: NotificationService
 
     def __init__(self, **kwargs: object) -> None:
