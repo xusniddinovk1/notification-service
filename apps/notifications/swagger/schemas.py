@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from ..serializers.bulk_notification import BulkSendNotificationSerializer
 from ..serializers.notification import NotificationSerializer, SendNotificationSerializer
 from drf_spectacular.utils import extend_schema, inline_serializer
 
@@ -40,5 +42,13 @@ notification_stats_schema = extend_schema(
             },
         )
     },
+    tags=["notifications"],
+)
+
+bulk_send_notifications_schema = extend_schema(
+    summary="Bulk send notifications",
+    description="Send a notification to multiple users at once. Admin only.",
+    request=BulkSendNotificationSerializer,
+    responses={200: NotificationSerializer(many=True)},
     tags=["notifications"],
 )
