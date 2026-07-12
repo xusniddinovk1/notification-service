@@ -7,6 +7,7 @@ from ..container import get_notification_service
 from ..serializers.bulk_notification import BulkSendNotificationSerializer
 from ..serializers.notification import NotificationSerializer
 from ..services import NotificationService
+from ..swagger.schemas import bulk_send_notifications_schema
 
 
 class BulkSendNotificationView(APIView):
@@ -17,6 +18,7 @@ class BulkSendNotificationView(APIView):
         super().__init__(**kwargs)
         self.service = get_notification_service()
 
+    @bulk_send_notifications_schema
     def post(self, request: Request) -> Response:
         serializer = BulkSendNotificationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
