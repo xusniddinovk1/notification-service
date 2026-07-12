@@ -88,8 +88,8 @@ REST_FRAMEWORK = {
         "login": "5/minute",
         "register": "3/minute",
         "send": "10/minute",
-        "bulk-send": "3/minute"
-    }
+        "bulk-send": "3/minute",
+    },
 }
 
 SPECTACULAR_SETTINGS = {
