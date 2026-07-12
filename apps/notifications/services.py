@@ -1,4 +1,6 @@
 from typing import Optional, Any, TYPE_CHECKING
+
+from celery import group
 from django.db.models import QuerySet
 from django.http import Http404
 from rest_framework.exceptions import ValidationError
@@ -63,6 +65,36 @@ class NotificationService:
         send_notification_task.delay(notification.id)
 
         return notification
+
+    def bulk_create_notifications(
+        self,
+        user_ids: list[int],
+        template_id: int,
+        payload: dict,
+    ) -> list[Notification]:
+        template = self.repo.get_template_by_id(template_id)
+        if not template:
+            raise Http404(f"Template with id {template_id} not found")
+        notifications = []
+        for user_id in user_ids:
+            user = self.repo.get_user_by_id(user_id)
+            if not user:
+                raise Http404(f"User with id {user_id} not found")
+
+            notifications.append(
+                Notification(
+                    user=user,
+                    template=template,
+                    payload=payload,
+                    status=Notification.STATUS.PENDING,
+                )
+            )
+        created = self.repo.bulk_create_notifications(notifications)
+
+        job = group(send_notification_task.s(n.id) for n in created)
+        job.apply_async()
+
+        return created
 
     def update_status(
         self, user: "User", notification_id: int, status: str

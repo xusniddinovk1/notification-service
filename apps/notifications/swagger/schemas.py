@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..serializer import NotificationSerializer, SendNotificationSerializer
+from ..serializers.notification import NotificationSerializer, SendNotificationSerializer
 from drf_spectacular.utils import extend_schema, inline_serializer
 
 list_notifications_schema = extend_schema(
